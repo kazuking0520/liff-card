@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>会員証</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding-top:40px;">
+  <div id="msg">読み込み開始</div>
+
+  <script>
+    const LIFF_ID = "2009733800-Hkn1IS4j";
+    const GAS_BASE = "https://script.google.com/macros/s/AKfycbzskWuUtXNLYy9DA82nQfN3IBEhc6Ack9ufdfGHm4Cip2jvuJziYxYjk8oIeIgnPWvc/exec";
+
+    async function main() {
+      const el = document.getElementById("msg");
+      try {
+        el.innerText = "LIFF初期化中";
+        await liff.init({ liffId: LIFF_ID });
+
+        el.innerText = "LIFF初期化完了";
+
+        if (!liff.isLoggedIn()) {
+          el.innerText = "LINEログインへ移動中";
+          liff.login();
+          return;
+        }
+
+        el.innerText = "プロフィール取得中";
+        const profile = await liff.getProfile();
+
+        el.innerText = "会員証へ移動中";
+        location.replace(
+          GAS_BASE + "?page=card_by_line&line_id=" + encodeURIComponent(profile.userId)
+        );
+      } catch (e) {
+        el.innerText = "エラー: " + String(e);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
